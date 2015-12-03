@@ -104,7 +104,7 @@ class OfacIndividual
   end
 
   # Returns an array of hashes of records in the OFAC data that found partial matches with that record's score.
-  # 
+  #
   #     OfacIndividual.new({:name => 'Oscar Hernandez', :city => 'Clearwater', :address => '123 somewhere ln'}).possible_hits
   #returns
   #     [{:address=>"123 Somewhere Ln", :score=>100, :name=>"HERNANDEZ, Oscar|GUAMATUR, S.A.", :city=>"Clearwater"}, {:address=>"123 Somewhere Ln", :score=>100, :name=>"HERNANDEZ, Oscar|Alternate Name", :city=>"Clearwater"}]
@@ -134,9 +134,9 @@ class OfacIndividual
         possible_sdns = OfacSdnIndividual.possible_sdns(name_array, use_ors = true)
         possible_sdns = possible_sdns.collect {|sdn|{:name => "#{sdn.name}|#{sdn.alternate_identity_name}", :city => sdn.city, :address => sdn.address}}
 
-        match = OfacMatch.new({:name => {:weight => 60, :token => "#{name_array.join(', ')}"},
+        match = OfacMatch.new({:name => {:weight => 80, :token => "#{name_array.join(', ')}"},
             :address => {:weight => 10, :token => @identity[:address]},
-            :city => {:weight => 30, :token => @identity[:city]}})
+            :city => {:weight => 10, :token => @identity[:city]}})
 
         score = match.score(possible_sdns)
         @possible_hits = match.possible_hits
@@ -155,4 +155,3 @@ class OfacIndividual
     end
   end
 end
-
