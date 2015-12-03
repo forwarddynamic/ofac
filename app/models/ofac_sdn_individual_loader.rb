@@ -1,4 +1,4 @@
-require 'net/http'
+require 'net/https'
 require 'active_record'
 require 'tempfile'
 begin
@@ -12,17 +12,17 @@ rescue Gem::LoadError, LoadError
 end
 
 class OfacSdnIndividualLoader
-  #Loads the most recent file from http://www.treas.gov/offices/enforcement/ofac/sdn/delimit/index.shtml
+  #Loads the most recent file from https://www.treas.gov/offices/enforcement/ofac/sdn/delimit/index.shtml
   def self.load_current_sdn_file
     puts "Reloading OFAC sdn data"
-    puts "Downloading OFAC data from http://www.treas.gov/offices/enforcement/ofac/sdn"
-    yield "Downloading OFAC data from http://www.treas.gov/offices/enforcement/ofac/sdn" if block_given?
+    puts "Downloading OFAC data from https://www.treas.gov/offices/enforcement/ofac/sdn"
+    yield "Downloading OFAC data from https://www.treas.gov/offices/enforcement/ofac/sdn" if block_given?
     #get the 3 data files
     sdn = Tempfile.new('sdn')
-    uri = URI.parse('http://www.treasury.gov/ofac/downloads/sdn.pip')
-    proxy_addr, proxy_port = ENV['http_proxy'].gsub("http://", "").split(/:/) if ENV['http_proxy']
+    uri = URI.parse('https://www.treasury.gov/ofac/downloads/sdn.pip')
+    proxy_addr, proxy_port = ENV['https_proxy'].gsub("https://", "").split(/:/) if ENV['https_proxy']
 
-    bytes = sdn.write(Net::HTTP::Proxy(proxy_addr, proxy_port).get(uri))
+    bytes = sdn.write(Net::https::Proxy(proxy_addr, proxy_port).get(uri))
     sdn.rewind
     if bytes == 0 || convert_line_to_array(sdn.readline).size != 12
       puts "Trouble downloading file.  The url may have changed."
@@ -32,10 +32,10 @@ class OfacSdnIndividualLoader
       sdn.rewind
     end
     address = Tempfile.new('sdn')
-    address.write(Net::HTTP::Proxy(proxy_addr, proxy_port).get(URI.parse('http://www.treasury.gov/ofac/downloads/add.pip')))
+    address.write(Net::https::Proxy(proxy_addr, proxy_port).get(URI.parse('https://www.treasury.gov/ofac/downloads/add.pip')))
     address.rewind
     alt = Tempfile.new('sdn')
-    alt.write(Net::HTTP::Proxy(proxy_addr, proxy_port).get(URI.parse('http://www.treasury.gov/ofac/downloads/alt.pip')))
+    alt.write(Net::https::Proxy(proxy_addr, proxy_port).get(URI.parse('https://www.treasury.gov/ofac/downloads/alt.pip')))
     alt.rewind
 
     if (defined?(ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter) && OfacSdnIndividual.connection.kind_of?(ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter)) || (defined?(ActiveRecord::ConnectionAdapters::JdbcAdapter) && OfacSdnIndividual.connection.kind_of?(ActiveRecord::ConnectionAdapters::JdbcAdapter))
@@ -308,7 +308,7 @@ class OfacSdnIndividualLoader
   # For mysql, use:
   # LOAD DATA LOCAL INFILE 'ssdm1.csv' INTO TABLE death_master_files FIELDS TERMINATED BY '|' ENCLOSED BY "`" LINES TERMINATED BY '\n';
   # This is a much faster way of loading large amounts of data into mysql.  For information on the LOAD DATA command
-  # see http://dev.mysql.com/doc/refman/5.1/en/load-data.html
+  # see https://dev.mysql.com/doc/refman/5.1/en/load-data.html
   def self.bulk_mysql_update(csv_file)
     puts "Deleting all records in ofac_sdn_individuals..."
     yield "Deleting all records in ofac_sdn_individuals..." if block_given?
