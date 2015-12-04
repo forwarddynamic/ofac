@@ -15,8 +15,8 @@ class OfacSdnIndividualLoader
   #Loads the most recent file from http://www.treas.gov/offices/enforcement/ofac/sdn/delimit/index.shtml
   def self.load_current_sdn_file
     puts "Reloading OFAC sdn data"
-    puts "Downloading OFAC data from https://www.treas.gov/offices/enforcement/ofac/sdn"
-    yield "Downloading OFAC data from https://www.treas.gov/offices/enforcement/ofac/sdn" if block_given?
+    puts "Downloading OFAC data from https://www.treasury.gov/offices/enforcement/ofac/sdn"
+    yield "Downloading OFAC data from https://www.treasury.gov/offices/enforcement/ofac/sdn" if block_given?
     #get the 3 data files
     sdn = Tempfile.new('sdn')
     uri = URI.parse('https://www.treasury.gov/ofac/downloads/sdn.pip')
@@ -298,7 +298,7 @@ class OfacSdnIndividualLoader
           end
         end
       end
-      if (i % 5000 == 0) && (i > 0)
+      if (i > 0)
         puts "#{i} records processed."
         yield "#{i} records processed." if block_given?
       end
