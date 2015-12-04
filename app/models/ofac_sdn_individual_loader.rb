@@ -234,7 +234,7 @@ class OfacSdnIndividualLoader
           end
         end
       end
-      if (i % 1000 == 0) && (i > 0)
+      if (i > 0)
         puts "#{i} records processed."
         yield "#{i} records processed." if block_given?
       end
