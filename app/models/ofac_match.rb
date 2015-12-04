@@ -94,7 +94,7 @@ class OfacMatch
                 end
 
               end
-                
+
               #if no match, then break the data down and see if we can find matches on the
               #individual words
               unless value > 0
@@ -108,7 +108,7 @@ class OfacMatch
 
                 value = 0
                 partial_weight = 1/token_array.length.to_f
-                
+
                 token_array.each do |partial_token|
                   #first see if we get an exact match of the partial
                   if success = match_array.include?(partial_token)
@@ -136,4 +136,3 @@ class OfacMatch
   end
 
 end
-
